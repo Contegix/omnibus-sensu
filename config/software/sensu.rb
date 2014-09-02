@@ -26,6 +26,7 @@ build do
   gem "install net-ntp --no-rdoc --no-ri" , :env => env
   gem "install net-ping --no-rdoc --no-ri" , :env => env
   gem "install net-snmp --no-rdoc --no-ri" , :env => env
+  gem "install snmp4em --no-rdoc --no-ri" , :env => env
   gem "install nori --no-rdoc --no-ri" , :env => env
   gem "install carrot-top --no-rdoc --no-ri" , :env => env
   gem "install dnsbl-client --no-rdoc --no-ri" , :env => env
