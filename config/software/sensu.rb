@@ -1,5 +1,5 @@
 name "sensu"
-version "0.12.6"
+version "0.13.1"
 
 dependency "ruby"
 dependency "rubygems"
@@ -73,9 +73,9 @@ build do
   command "rsync -a #{Omnibus.project_root}/files/ #{install_dir}/"
   
   # apply patch for Sensu PR 697
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/1.9.1/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-00.patch"
+  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-00.patch"
   # apply patch for Contegix/omninbus-sensu
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/1.9.1/gems/sensu-#{version} -p1 -i #{Omnibus.project_root}/config/patches/sensu/sensu-01.patch"
+  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p1 -i #{Omnibus.project_root}/config/patches/sensu/sensu-01.patch"
   # apply patch for adding interval to events
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/1.9.1/gems/sensu-#{version} -p1 -i #{Omnibus.project_root}/config/patches/sensu/sensu-02.patch"
+  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p1 -i #{Omnibus.project_root}/config/patches/sensu/sensu-02.patch"
 end
