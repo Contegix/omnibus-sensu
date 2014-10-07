@@ -14,7 +14,6 @@ dependency "preparation"
 
 # sensu dependencies/components
 dependency "ruby"
-dependency "perl"
 dependency "sensu"
 dependency "ubersmithrb"
 
