@@ -1,12 +1,11 @@
 #
-# Copyright:: Copyright (c) 2012 Opscode, Inc.
-# License:: Apache License, Version 2.0
+# Copyright 2012-2014 Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,24 +15,29 @@
 #
 
 name "gdbm"
-version "1.9.1"
+default_version "1.9.1"
 
 dependency "libgcc"
 
-source :url => "http://ftp.gnu.org/gnu/gdbm/gdbm-1.9.1.tar.gz",
-       :md5 => "59f6e4c4193cb875964ffbe8aa384b58"
+source url: "http://ftp.gnu.org/gnu/gdbm/gdbm-1.9.1.tar.gz",
+       md5: "59f6e4c4193cb875964ffbe8aa384b58"
 
 relative_path "gdbm-1.9.1"
 
 build do
-  configure_command = ["./configure",
-                       "--prefix=#{install_dir}/embedded"]
+  env = with_standard_compiler_flags(with_embedded_path)
 
-  if platform == "freebsd"
-    configure_command << "--with-pic"
+  if freebsd?
+    command "./configure" \
+            " --enable-libgdbm-compat" \
+            " --with-pic" \
+            " --prefix=#{install_dir}/embedded", env: env
+  else
+    command "./configure" \
+            " --enable-libgdbm-compat" \
+            " --prefix=#{install_dir}/embedded", env: env
   end
 
-  command configure_command.join(" ")
-  command "make -j #{max_build_jobs}"
-  command "make install"
+  make "-j #{workers}", env: env
+  make "install", env: env
 end
