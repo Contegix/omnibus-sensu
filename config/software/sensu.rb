@@ -7,6 +7,7 @@ dependency "libffi"
 dependency "nokogiri"
 dependency "ffi"
 dependency "curl"
+dependency "cacerts"
 dependency "libnetsnmp"
 
 env = {	"PKG_CONFIG_PATH" => "#{install_dir}/embedded/lib/pkgconfig" }
