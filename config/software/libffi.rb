@@ -1,5 +1,6 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,31 +21,26 @@ default_version "3.0.13"
 dependency "libgcc"
 dependency "libtool"
 
-source url: "ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz",
-       md5: '45f3b6dbc9ee7c7dfbbbc5feba571529'
+source :url => "ftp://sourceware.org/pub/libffi/libffi-3.0.13.tar.gz",
+       :md5 => '45f3b6dbc9ee7c7dfbbbc5feba571529'
 
 relative_path "libffi-3.0.13"
 
+env = with_embedded_path()
+env = with_standard_compiler_flags(env)
+
 build do
-  env = with_standard_compiler_flags(with_embedded_path)
-
-  command "./configure" \
-          " --prefix=#{install_dir}/embedded", env: env
-
-  make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
-
+  command "./configure --prefix=#{install_dir}/embedded", :env => env
+  command "make -j #{max_build_jobs}", :env => env
+  command "make -j #{max_build_jobs} install", :env => env
   # libffi's default install location of header files is awful...
-  copy "#{install_dir}/embedded/lib/libffi-#{version}/include/*", "#{install_dir}/embedded/include"
+  command "cp -f #{install_dir}/embedded/lib/libffi-3.0.13/include/* #{install_dir}/embedded/include"
 
   # On 64-bit centos, libffi libraries are places under /embedded/lib64
   # move them over to lib
   if rhel? && _64_bit?
-    # Can't use 'move' here since that uses FileUtils.mv, which on < Ruby 2.2.0-dev
-    # returns ENOENT on moving symlinks with broken (in this case, already moved) targets.
-    # http://comments.gmane.org/gmane.comp.lang.ruby.cvs/49907
-    copy "#{install_dir}/embedded/lib64/*", "#{install_dir}/embedded/lib/"
-    delete "#{install_dir}/embedded/lib64"
+    command "mv #{install_dir}/embedded/lib64/* #{install_dir}/embedded/lib/"
+    command "rm -rf #{install_dir}/embedded/lib64"
   end
 end
 

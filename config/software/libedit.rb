@@ -1,5 +1,6 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,18 +33,37 @@ source url: "http://www.thrysoee.dk/editline/libedit-#{version}.tar.gz"
 
 relative_path "libedit-#{version}"
 
-build do
-  env = with_standard_compiler_flags(with_embedded_path)
+env = case Ohai['platform']
+      when "aix"
+        {
+          "CC" => "xlc -q64",
+          "CXX" => "xlC -q64",
+          "LD" => "ld -b64",
+          "CFLAGS" => "-q64 -I#{install_dir}/embedded/include -O",
+          "CXXFLAGS" => "-q64 -I#{install_dir}/embedded/include -O",
+          "OBJECT_MODE" => "64",
+          "ARFLAGS" => "-X64 cru",
+          "M4" => "/opt/freeware/bin/m4",
+          "LDFLAGS" => "-q64 -L#{install_dir}/embedded/lib -Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib",
+        }
+      else
+        {
+          "LDFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses",
+          "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses",
+          "LD_RUN_PATH" => "#{install_dir}/embedded/lib",
+          "LD_OPTIONS" => "-R#{install_dir}/embedded/lib"
+        }
+      end
 
+build do
   # The patch is from the FreeBSD ports tree and is for GCC compatibility.
   # http://svnweb.freebsd.org/ports/head/devel/libedit/files/patch-vi.c?annotate=300896
-  if freebsd?
-    patch source: "freebsd-vi-fix.patch"
+  if Ohai['platform'] == "freebsd"
+    patch :source => "freebsd-vi-fix.patch"
   end
-
-  command "./configure" \
-          " --prefix=#{install_dir}/embedded", env: env
-
-  make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  command ["./configure",
+           "--prefix=#{install_dir}/embedded"
+           ].join(" "), :env => env
+  command "make -j #{max_build_jobs}", :env => env
+  command "make -j #{max_build_jobs} install"
 end

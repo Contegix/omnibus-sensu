@@ -1,5 +1,6 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,15 +35,18 @@ source url: "ftp://xmlsoft.org/libxml2/libxml2-#{version}.tar.gz"
 relative_path "libxml2-#{version}"
 
 build do
-  env = with_standard_compiler_flags(with_embedded_path)
-
-  command "./configure" \
-          " --prefix=#{install_dir}/embedded" \
-          " --with-zlib=#{install_dir}/embedded" \
-          " --with-iconv=#{install_dir}/embedded" \
-          " --without-python" \
-          " --without-icu", env: env
-
-  make "-j #{workers}", env: env
-  make "install", env: env
+  cmd = ["./configure",
+         "--prefix=#{install_dir}/embedded",
+         "--with-zlib=#{install_dir}/embedded",
+         "--with-iconv=#{install_dir}/embedded",
+         "--without-python",
+         "--without-icu"].join(" ")
+  env = {
+    "LDFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+    "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+    "LD_RUN_PATH" => "#{install_dir}/embedded/lib"
+  }
+  command cmd, :env => env
+  command "make -j #{max_build_jobs}", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"}
+  command "make install", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"}
 end

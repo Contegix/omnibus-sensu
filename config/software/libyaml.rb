@@ -1,5 +1,6 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +18,16 @@
 name "libyaml"
 default_version '0.1.6'
 
-source url: "http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz",
-       md5: '5fe00cda18ca5daeb43762b80c38e06e'
+source :url => "http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz",
+       :md5 => '5fe00cda18ca5daeb43762b80c38e06e'
 
 relative_path "yaml-#{version}"
 
+env = with_embedded_path()
+env = with_standard_compiler_flags(env)
+
 build do
-  env = with_standard_compiler_flags(with_embedded_path)
-
-  command "./configure --prefix=#{install_dir}/embedded", env: env
-
-  make "-j #{workers}", env: env
-  make "-j #{workers} install", env: env
+  command "./configure --prefix=#{install_dir}/embedded", :env => env
+  command "make -j #{max_build_jobs}", :env => env
+  command "make -j #{max_build_jobs} install", :env => env
 end
