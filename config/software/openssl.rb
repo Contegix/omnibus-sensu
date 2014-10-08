@@ -1,5 +1,6 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +23,7 @@ dependency "libgcc"
 dependency "makedepend"
 
 
-if aix?
+if Ohai['platform'] == "aix"
   # XXX: OpenSSL has an open bug on 1.0.1e where it fails to install on AIX
   #      http://rt.openssl.org/Ticket/Display.html?id=2986&user=guest&pass=guest
   default_version "1.0.1c"
@@ -39,7 +40,7 @@ relative_path "openssl-#{version}"
 build do
   patch :source => "openssl-1.0.1f-do-not-build-docs.patch"
 
-  env = case ohai["platform"]
+  env = case Ohai['platform']
         when "mac_os_x"
           {
             "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses",
@@ -82,7 +83,7 @@ build do
     "shared",
   ].join(" ")
 
-  configure_command = case ohai["platform"]
+  configure_command = case Ohai['platform']
                       when "aix"
                         ["perl", "./Configure",
                          "aix64-cc",
@@ -104,8 +105,8 @@ build do
                          "-R#{install_dir}/embedded/lib",
                         "-static-libgcc"].join(" ")
                       when "solaris2"
-                        if Omnibus::Config.solaris_compiler == "gcc"
-                          if ohai["kernel"]["machine"] =~ /sun/
+                        if Config.solaris_compiler == "gcc"
+                          if architecture == "sparc"
                             ["/bin/sh ./Configure",
                              "solaris-sparcv9-gcc",
                              common_args,
@@ -139,9 +140,19 @@ build do
   # openssl build process uses a `makedepend` tool that we build inside the bundle.
   env["PATH"] = "#{install_dir}/embedded/bin" + File::PATH_SEPARATOR + ENV["PATH"]
 
-  command configure_command, env: env
-  make "depend", env: env
+  # @todo: move into omnibus-ruby
+  has_gmake = system("gmake --version")
+
+  if has_gmake
+    env.merge!({'MAKE' => 'gmake'})
+    make_binary = 'gmake'
+  else
+    make_binary = 'make'
+  end
+
+  command configure_command, :env => env
+  command "#{make_binary} depend", :env => env
   # make -j N on openssl is not reliable
-  make env: env
-  make "install", env: env
+  command "#{make_binary}", :env => env
+  command "#{make_binary} install", :env => env
 end
