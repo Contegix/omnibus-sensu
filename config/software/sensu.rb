@@ -74,8 +74,6 @@ build do
   
   # apply patch for Sensu PR 697
   command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-00.patch"
-  # apply patch for Contegix/omninbus-sensu
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p1 -i #{Omnibus.project_root}/config/patches/sensu/sensu-01.patch"
-  # apply patch for adding interval to events
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p1 -i #{Omnibus.project_root}/config/patches/sensu/sensu-02.patch"
+  # apply patch for check information saved to redis
+  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-01.patch"
 end
