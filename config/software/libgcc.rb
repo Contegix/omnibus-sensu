@@ -1,5 +1,6 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
+# License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,35 +21,28 @@
 #       That will probably be the best solution going forwards rather than
 #       fuss around with the dynamic linking business here.
 #
-
-# # Uncomment the following code to throw a warning when someone depends on this
-# # software definition.
-# Omnibus.logger.deprecated('libgcc') do
-#   "Please do not use the libgcc dependency, it will be removed in the " \
-#   "future. Compile with `--static-libgcc' instead!"
-# end
-
 name "libgcc"
 description "On UNIX systems where we bootstrap a compiler, copy the libgcc"
 default_version "0.0.1"
 
-build do
-  libgcc_file = case ohai['platform']
-                when "solaris2"
-                  "/opt/csw/lib/libgcc_s.so.1"
-                when "aix"
-                  "/opt/freeware/lib/pthread/ppc64/libgcc_s.a"
-                when "freebsd"
-                  "/lib/libgcc_s.so.1"
-                else
-                  nil
-                end
+libgcc_file =
+  case Ohai['platform']
+  when "solaris2"
+    "/opt/csw/lib/libgcc_s.so.1"
+  when "aix"
+    "/opt/freeware/lib/pthread/ppc64/libgcc_s.a"
+  when "freebsd"
+    "/lib/libgcc_s.so.1"
+  else
+    nil
+  end
 
+build do
   if libgcc_file
-    if File.exist?(libgcc_file)
-      copy libgcc_file, "#{install_dir}/embedded/lib/"
+    if File.exists?(libgcc_file)
+      command "cp #{libgcc_file} #{install_dir}/embedded/lib/"
     else
-      raise "Cannot find libgcc -- where is your gcc compiler?"
+      raise "cannot find libgcc -- where is your gcc compiler?"
     end
   end
 end
