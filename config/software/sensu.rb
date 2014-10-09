@@ -76,4 +76,5 @@ build do
   command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-00.patch"
   # apply patch for check information saved to redis
   command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-01.patch"
+  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-settings-1.0.0 -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-02.patch"
 end
