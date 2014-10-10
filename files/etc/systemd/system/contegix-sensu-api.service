@@ -1,0 +1,14 @@
+[Unit]
+Description=Contegix Sensu API
+
+[Service]
+User=contegix-sensu
+Group=contegix-sensu
+ExecStart=/opt/contegix/sensu/bin/sensu-api -c /opt/contegix/sensu/etc/sensu/config.json -d /opt/contegix/sensu/etc/sensu/conf.d -e /opt/contegix/sensu/etc/sensu/extensions -l /opt/contegix/sensu/var/log/sensu/sensu-api.log
+KillMode=process
+Restart=on-failure
+RestartSec=1min
+
+[Install]
+WantedBy=multi-user.target
+
