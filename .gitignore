@@ -6,3 +6,4 @@ pkg/*
 .vagrant
 bin/*
 vendor/cookbooks
+berks-cookbooks
