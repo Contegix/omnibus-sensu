@@ -58,7 +58,7 @@ configure_env =
     end
   else
     {
-      "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+      "LDFLAGS" => "-Wl,-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
       "CFLAGS" => "-I#{install_dir}/embedded/include -L#{install_dir}/embedded/lib",
       "PKG_CONFIG_PATH" => "#{install_dir}/embedded/lib/pkgconfig"
     }
