@@ -1,12 +1,12 @@
 #
-# Copyright:: Copyright (c) 2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2012-2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,24 +16,35 @@
 #
 
 name "libedit"
-version "20120601-3.0"
+default_version "20120601-3.0"
 
 dependency "ncurses"
 dependency "libgcc"
 
-source :url => "http://www.thrysoee.dk/editline/libedit-20120601-3.0.tar.gz",
-       :md5 => "e50f6a7afb4de00c81650f7b1a0f5aea"
+version "20120601-3.0" do
+  source md5: "e50f6a7afb4de00c81650f7b1a0f5aea"
+end
 
-relative_path "libedit-20120601-3.0"
+version "20130712-3.1" do
+  source md5: "0891336c697362727a1fa7e60c5cb96c"
+end
 
-env = case platform
+source url: "http://www.thrysoee.dk/editline/libedit-#{version}.tar.gz"
+
+relative_path "libedit-#{version}"
+
+env = case Ohai['platform']
       when "aix"
         {
-          "LDFLAGS" => "-maix64 -L#{install_dir}/embedded/lib -Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib",
-          "CFLAGS" => "-maix64 -I#{install_dir}/embedded/include",
+          "CC" => "xlc -q64",
+          "CXX" => "xlC -q64",
           "LD" => "ld -b64",
+          "CFLAGS" => "-q64 -I#{install_dir}/embedded/include -O",
+          "CXXFLAGS" => "-q64 -I#{install_dir}/embedded/include -O",
           "OBJECT_MODE" => "64",
-          "ARFLAGS" => "-X64 cru"
+          "ARFLAGS" => "-X64 cru",
+          "M4" => "/opt/freeware/bin/m4",
+          "LDFLAGS" => "-q64 -L#{install_dir}/embedded/lib -Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib",
         }
       else
         {
@@ -47,7 +58,7 @@ env = case platform
 build do
   # The patch is from the FreeBSD ports tree and is for GCC compatibility.
   # http://svnweb.freebsd.org/ports/head/devel/libedit/files/patch-vi.c?annotate=300896
-  if platform == "freebsd"
+  if Ohai['platform'] == "freebsd"
     patch :source => "freebsd-vi-fix.patch"
   end
   command ["./configure",

@@ -15,6 +15,12 @@ function error_exit
 prefix="contegix-"
 install_dir="/opt/contegix/sensu"
 sensu_services="sensu-client sensu-service" #sensu-server sensu-api sensu-dashboard"
+if [ -f /etc/redhat-release ]; then
+  os_family="RedHat"
+else
+  os_family="Unknown"
+fi
+os_major_rev="$(perl -pe 's/.*release (\d+)\.\d+.*/$1/' /etc/redhat-release)"
 
 # Install package - add services and change permissions
 # On first install, register the init scripts but disable services.
@@ -47,5 +53,12 @@ done
 chown -R ${prefix}sensu:${prefix}sensu ${install_dir}/etc/sensu
 chown -R ${prefix}sensu:${prefix}sensu ${install_dir}/var/
 
+# Add systemd service definitions if on EL 7
+if [ "${os_major_rev}" == "7" -a "${os_family}" == "RedHat" ]; then
+  for service in $sensu_services; do
+    [ -h /etc/systemd/system/${prefix}${service}.service ] || ln -s ${install_dir}/etc/systemd/system/contegix-${service}.service /etc/systemd/system/${prefix}${service}.service
+  done
+  systemctl daemon-reload
+fi
 
 exit 0

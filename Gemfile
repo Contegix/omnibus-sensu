@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gem 'omnibus', '= 1.3.0'
-gem 'ohai', '= 6.22'
-gem 'omnibus-software', :git => 'git://github.com/opscode/omnibus-software.git', :ref => '485f25f08a'
+gem 'omnibus', '= 3.2.0'
+gem 'ohai', '= 7.4.0'
+gem 'omnibus-software', :git => 'git://github.com/opscode/omnibus-software.git', :ref => 'b325286346b50c268ce23931a23d0db3944babb8'

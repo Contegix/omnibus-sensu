@@ -1,10 +1,13 @@
---- a/lib/sensu/server.rb	2014-04-19 11:14:58.000000000 -0500
-+++ b/lib/sensu/server.rb	2014-07-02 14:51:31.659610191 -0500
-@@ -471,6 +471,7 @@
-                     :status => check[:status],
-                     :issued => check[:issued],
-                     :check_parameters => {
-+                      :interval => check[:interval] ? check[:interval] : nil,
-                       :refresh => check[:refresh] ? check[:refresh] : nil,
-                       :occurrences => check[:occurrences] ? check[:occurrences] : nil,
-                       :dependencies => check[:dependencies] ? check[:dependencies] : nil
+diff --git lib/sensu/settings/validators/check.rb lib/sensu/settings/validators/check.rb
+index 1348e4a..de325c4 100644
+--- lib/sensu/settings/validators/check.rb
++++ lib/sensu/settings/validators/check.rb
+@@ -61,7 +61,7 @@ module Sensu
+             invalid(check, "check name must be a string")
+           must_match_regex(/^[\w\.-]+$/, check[:name]) ||
+             invalid(check, "check name cannot contain spaces or special characters")
+-          must_be_a_string(check[:command]) ||
++          (must_be_a_string(check[:command]) or must_be_a_string(check[:extension])) ||
+             invalid(check, "check command must be a string")
+           must_be_a_numeric_if_set(check[:timeout]) ||
+             invalid(check, "check timeout must be numeric")
