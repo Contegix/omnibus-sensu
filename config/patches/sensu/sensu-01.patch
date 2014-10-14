@@ -6,7 +6,7 @@ index 5d3ed9e..7da0d45 100644
                      event[:occurrences] = previous_occurrence[:occurrences] + 1
                    end
                    event[:action] = is_flapping ? :flapping : :create
-+                  event[:check_paramters] = {
++                  event[:check_parameters] = {
 +                    :interval => check[:interval] ? check[:interval] : nil,
 +                    :refresh => check[:refresh] ? check[:refresh] : nil,
 +                    :occurrences => check[:occurrences] ? check[:occurrences] : nil,
