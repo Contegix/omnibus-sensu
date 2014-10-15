@@ -52,6 +52,7 @@ if [ "${os_major_rev}" == "7" -a "${os_family}" == "RedHat" ]; then
   for service in $rhel7_services; do
     [ -h /etc/systemd/system/${prefix}${service}.service ] || ln -s ${install_dir}/etc/systemd/system/contegix-${service}.service /etc/systemd/system/${prefix}${service}.service
     systemctl daemon-reload
+    systemctl enable ${prefix}${service}
   done
 else
   for service in $sensu_services; do
