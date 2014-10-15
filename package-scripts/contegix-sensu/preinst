@@ -3,7 +3,7 @@
 
 install_dir="/opt/contegix/sensu"
 
-/etc/init.d/contegix-sensu-client stop
+service contegix-sensu-client stop
 
 if [ -d "${install_dir}/embedded" ]; then
   rm -rf "${install_dir}/embedded"
