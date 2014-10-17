@@ -50,7 +50,7 @@ chown -R ${prefix}sensu:${prefix}sensu ${install_dir}/var/
 # Add systemd service definitions if on EL 7
 if [ "${os_major_rev}" == "7" -a "${os_family}" == "RedHat" ]; then
   for service in $rhel7_services; do
-    [ -h /etc/systemd/system/${prefix}${service}.service ] || ln -s ${install_dir}/etc/systemd/system/contegix-${service}.service /etc/systemd/system/${prefix}${service}.service
+    [ -h /usr/lib/systemd/system/${prefix}${service}.service ] || cp ${install_dir}/etc/systemd/system/${prefix}${service}.service /usr/lib/systemd/system/${prefix}${service}.service
     systemctl daemon-reload
   done
 else
