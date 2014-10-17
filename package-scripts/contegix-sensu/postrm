@@ -10,14 +10,10 @@ sensu_services="sensu-client" # sensu-service sensu-server sensu-api sensu-dashb
 
 #upgrade
 if [ "${1}" -ge "2" ] ; then
-
 	for service in $sensu_services; do
 		service="${prefix}${service}"
-		if [ -h /etc/init.d/${service} ] ; then
-			/etc/init.d/${service} restart
-		fi
+		service ${service} status && service ${service} restart
 	done
-
 
 fi
 
