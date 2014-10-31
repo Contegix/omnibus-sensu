@@ -23,10 +23,10 @@ if [ "${1}" -eq "0" ] ; then
 	# Disable and stop sensu services
 	if [ "${os_major_rev}" == "7" -a "${os_family}" == "RedHat" ] ; then
 		service="${prefix}sensu-client"
-		if [ -e /etc/systemd/system/${service}.service ] ; then
+		if [ -e /usr/lib/systemd/system/${service}.service ] ; then
 			service status ${service} 2>&1 > /dev/null && service stop ${service}
 			systemctl disable ${service}
-			rm -f /etc/systemd/system/${service}
+			rm -f /usr/lib/systemd/system/${service}
 			systemctl daemon-reload
 		fi
 	else
