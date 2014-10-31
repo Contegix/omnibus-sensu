@@ -9,7 +9,9 @@ Environment="PATH=/opt/contegix/sensu/embedded/bin:/opt/contegix/sensu/bin:/usr/
 Environment="LOG_LEVEL=info"
 Environment="GEM_PATH=/opt/contegix/sensu/embedded/lib/ruby/gems/2.0.0"
 EnvironmentFile=/opt/contegix/sensu/etc/sysconfig/sensu
-ExecStart=/opt/contegix/sensu/bin/sensu-client -c ${INSTALL_BASE}/etc/sensu/conf.d/client.json -d ${INSTALL_BASE}/etc/sensu/conf.d -e ${INSTALL_BASE}/etc/sensu/extensions -l ${INSTALL_BASE}/var/log/sensu/sensu-client.log -L ${LOG_LEVEL}
+ExecStart=/opt/contegix/sensu/bin/sensu-client -b -c ${INSTALL_BASE}/etc/sensu/conf.d/client.json -d ${INSTALL_BASE}/etc/sensu/conf.d -e ${INSTALL_BASE}/etc/sensu/extensions -l ${INSTALL_BASE}/var/log/sensu/sensu-client.log -p ${INSTALL_BASE}/var/run/sensu/sensu-client.pid -L ${LOG_LEVEL}
+Type=forking
+PIDFile=/opt/contegix/sensu/var/run/sensu/sensu-client.pid
 KillMode=process
 Restart=on-failure
 RestartSec=1min
