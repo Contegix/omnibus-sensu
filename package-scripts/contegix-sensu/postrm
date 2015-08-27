@@ -8,27 +8,44 @@ prefix="contegix-"
 install_dir="/opt/contegix/sensu"
 sensu_services="sensu-client" # sensu-service sensu-server sensu-api sensu-dashboard"
 
+if [ -f /etc/redhat-release ]; then
+  os_family="RedHat"
+  os_major_rev="$(perl -pe 's/.*release (\d+)\.\d+.*/$1/' /etc/redhat-release)"
+elif [ -f /etc/lsb-release ]; then
+  . /etc/lsb-release
+  os_family=$DISTRIB_ID
+  os_major_rev=$DISTRIB_RELEASE
+else
+  os_family="Unknown"
+fi
+
 #upgrade
 if [ "${1}" -ge "2" ] ; then
-	for service in $sensu_services; do
-		service="${prefix}${service}"
-		service ${service} status && service ${service} restart
-	done
-
+  if [ "${os_family}" == "RedHat" ]; then
+    for service in $sensu_services; do
+      service="${prefix}${service}"
+      service ${service} status && service ${service} restart
+    done
+  else
+    for service in $sensu_services; do
+      service="${prefix}${service}"
+      /etc/init.d/${service} status && /etc/init.d/${service} restart
+    done
+  fi
 fi
 
 # uninstall
 if [ "${1}" -eq "0" ] ; then
 
-	# Delete sensu user
-	if getent passwd ${prefix}sensu >/dev/null; then
-		userdel -f ${prefix}sensu
-	fi
+  # Delete sensu user
+  if getent passwd ${prefix}sensu >/dev/null; then
+    userdel -f ${prefix}sensu
+  fi
 
-	# Delete sensu group
-	if getent group ${prefix}sensu >/dev/null; then
-		groupdel -f ${prefix}sensu
-	fi
+  # Delete sensu group
+  if getent group ${prefix}sensu >/dev/null; then
+    groupdel -f ${prefix}sensu
+  fi
 
 fi 
 

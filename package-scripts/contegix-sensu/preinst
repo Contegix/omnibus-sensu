@@ -3,7 +3,22 @@
 
 install_dir="/opt/contegix/sensu"
 
-service contegix-sensu-client stop
+if [ -f /etc/redhat-release ]; then
+  os_family="RedHat"
+  os_major_rev="$(perl -pe 's/.*release (\d+)\.\d+.*/$1/' /etc/redhat-release)"
+elif [ -f /etc/lsb-release ]; then
+  . /etc/lsb-release
+  os_family=$DISTRIB_ID
+  os_major_rev=$DISTRIB_RELEASE
+else
+  os_family="Unknown"
+fi
+
+if [ "${os_family}" == "RedHat" ]; then
+  service contegix-sensu-client stop
+else   
+  /etc/init.d/contegix-sensu-client stop
+fi
 
 if [ -d "${install_dir}/embedded" ]; then
   rm -rf "${install_dir}/embedded"
