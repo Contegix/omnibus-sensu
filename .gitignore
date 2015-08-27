@@ -7,3 +7,4 @@ pkg/*
 bin/*
 vendor/cookbooks
 berks-cookbooks
+cookbooks

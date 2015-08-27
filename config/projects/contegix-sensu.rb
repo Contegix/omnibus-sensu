@@ -4,15 +4,13 @@ maintainer "Contegix LLC"
 homepage "https://www.contegix.com"
 
 replaces        "contegix-sensu"
-install_path    "/opt/contegix/sensu"
+install_dir     "/opt/contegix/sensu"
 #build_version   Omnibus::BuildVersion.new.semver
-build_version   "0.13.1"
-build_iteration 5
-
-# creates required build directories
-dependency "preparation"
+build_version   "0.20.3-1"
+build_iteration 2
 
 # sensu dependencies/components
+
 dependency "ruby"
 dependency "sensu"
 dependency "ubersmithrb"
@@ -21,7 +19,7 @@ dependency "ubersmithrb"
 dependency "version-manifest"
 
 # config files
-config_file "#{install_path}/etc/sysconfig/sensu"
+config_file "#{install_dir}/etc/sysconfig/sensu"
 
 exclude "\.git*"
 exclude "bundler\/git"

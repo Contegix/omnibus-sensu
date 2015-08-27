@@ -1,5 +1,5 @@
 name "sensu"
-version "0.13.1"
+version "0.20.3"
 
 dependency "ruby"
 dependency "rubygems"
@@ -16,7 +16,6 @@ build do
   gem "install sensu -n #{install_dir}/bin --no-rdoc --no-ri -v #{version}"
   gem "install sensu-cli -n #{install_dir}/bin --no-rdoc --no-ri"
   gem "install sensu-plugin -n #{install_dir}/bin --no-rdoc --no-ri"
-  gem "install sensu-dashboard -n #{install_dir}/bin --no-rdoc --no-ri"
   gem "install bunny --no-rdoc --no-ri" , :env => env
   gem "install net-ssh --no-rdoc --no-ri" , :env => env
   gem "install net-sftp --no-rdoc --no-ri" , :env => env
@@ -71,12 +70,4 @@ build do
 
   # load default configuration files
   command "rsync -a #{Omnibus.project_root}/files/ #{install_dir}/"
-  
-  # apply patch for Sensu PR 697
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-00.patch"
-  # apply patch for check information saved to redis
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-01.patch"
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-settings-1.0.0 -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-02.patch"
-  # Apply patch for proper error handling of non-UTF8 characters in check results. Not necessary in 0.14.0
-  command "patch -d #{install_dir}/embedded/lib/ruby/gems/2.0.0/gems/sensu-#{version} -p0 -i #{Omnibus.project_root}/config/patches/sensu/sensu-03.patch"
 end
