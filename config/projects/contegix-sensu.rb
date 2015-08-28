@@ -7,7 +7,7 @@ replaces        "contegix-sensu"
 install_dir     "/opt/contegix/sensu"
 #build_version   Omnibus::BuildVersion.new.semver
 build_version   "0.20.3-1"
-build_iteration 3
+build_iteration 4
 
 # sensu dependencies/components
 
